@@ -85,10 +85,13 @@ public class DipendentiService {
 		this.dipendentiRepository.delete(found);
 	}
 
-	public String uploadImmagineProfilo(MultipartFile file) {
+	public String uploadImmagineProfilo(UUID dipendenteId, MultipartFile file) {
+		Dipendente found = this.findById(dipendenteId);
 		try {
 			Map result = this.cloudinaryUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
 			String imageUrl = (String) result.get("secure_url");
+			found.setImmagineProfilo(imageUrl);
+			this.dipendentiRepository.save(found);
 			return imageUrl;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
